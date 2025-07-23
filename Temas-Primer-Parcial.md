@@ -23,6 +23,8 @@ $L^+ = \cup_{i>0} L^i$
 
 ### Operaciones y sus propiedades
 
+<img src='propiedades.png' width=500>
+
 > Unión 
     $L_1 \cup L_2$
     $M_1 = < Q_1, \Sigma, \delta_1, q_0, F_1 >$
@@ -335,3 +337,24 @@ Para todo lenguaje $L$ libre de contexto, existe $n>0$ tal que para toda cadena 
 > Los lenguajes generados por APND por estado final tienen el mismo poder expresivo que los APND por pila vacia
 > Los lenguajes generados por PAD por estado final tienen mayor poder expresivo que los APD por pila vacia
 > Los lenguajes generados por APD por pila vacia son libres de prefijos
+
+### Gramática
+Una gramática es una 4-upla $G = < V_N, V_T, P, S >$ donde:
+> $V_N$ es el conjunto de simbolos no-terminales (variables/categorías sintácticas)
+> $V_T$ es un conjunto de símbolos terminales 
+> $P$ es el conjunto de producciones 
+> $S \in V_N$ es el símbolo distinguido (start) de $V_N$
+
+En la jerarquía de Chomsky hay 4 tipos de gramática:
+> Tipo 0 (gramáticas sin restricciones): $\alpha \rightarrow \beta$
+> Tipo 1 (gramáticas sensibles al contexto): $\alpha \rightarrow \beta, |\alpha| \leq |\beta|$
+> Tipo 2 (gramáticas libres de contexto): $\alpha \rightarrow \gamma, A\in V_N, \gamma \in (V_N \cup V_T)*$
+> Tipo 3 (gramáticas regulares): $A \rightarrow a, A \rightarrow aB, A \rightarrow \lambda, \text{ con A, B } \in V_N, a\in V_T$
+
+### Importancia de las gramáticas libres de contexto: 
+Para cada gramática libre de contexto G hay un autómata de pila M que acepta el lenguaje generado por dicha gramática y viceversa.
+Dada una gramática libre de contexto G, se puede decidir si una palabra pertenece a L(G) en tiempo del orden cúbico de la longitud de la palabra.
+En casos especiales (determinismo), se puede reconocer en tiempo lineal.
+Los lenguajes de programación son lenguajes libres de contexto.
+
+<img src='lenguaje_generado_por_gramatica.png' width=500>
