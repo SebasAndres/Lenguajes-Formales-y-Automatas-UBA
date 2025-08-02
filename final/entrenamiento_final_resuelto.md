@@ -28,10 +28,10 @@
  Entonces basta en calcular $L(M)^c$.
 
 ¿Cómo calculo $L(M)^c$?
-> biribiriasfse
+> Ver resumen parcial 1 (armado del autómata).
 
 ¿Cómo valido $L(M) = \empty$?
->  aksdjiajdw
+>  Manual. Es ver si el estado inicial o los estados finales no son alcanzables por transiciones no lambda desde el inicial.
 
 
 [2] Algoritmo 2:
@@ -89,10 +89,12 @@ $L_1 = <Q_1, \Sigma, \delta_1, q_0^{(1)}, F_1>$
 $L_2 = <Q_2, \Sigma, \delta_2, q_0^{(2)}, F_2>$ 
 
 $M = <Q, \Sigma, \delta, q_0, F>$ 
-|-> $Q = \{(u, v, n, m) : u \in Q_1 \land v \in Q_2\}$
-|-> $\delta(a, (u_1, v_1, n, m), (u_2, v_2, n+1, m+1)) \iff \delta_1(a, u_1, u_2) \land \delta_2(a, v_1, v_2)$
-|-> $q_0 = (q_0^{(1)}, q_0^{(2)})$
-|-> $F = \{ (u, v, n, m): u \in F_1 \land v \in F_2 \land n = m \}$
+- $Q = Q_1 \times Q_2$
+- $\Sigma = \Sigma \times \Sigma$
+- $q_0 = (q_0^{1}, q_0^{2})$
+- $\delta : Q \times (\Sigma \times \Sigma) \rightarrow Q$
+- $\delta((q_1, q_2), (a,b)) = (\delta_1(q_1, a), \delta_2(q_2, b))$
+- $F' = F_1 \times F_2$
 
 ## Ejercicio 6.
 
@@ -110,12 +112,12 @@ Decir Verdadero o Falso y justificar:
 > Verdadero. Si es deterministico no tiene transiciones lambda.
 
 4. Los automatas de pila determinısticos reconocen una cadena de longitud $n$ en exactamente $n$ transiciones.
-> Falso. Los autómatas de pila si pueden tener transiciones $\lambda$ ?????! (Duda)
+> Falso. Los autómatas de pila pueden tener transiciones $\lambda$ por definición.
 
 5. Las maquinas de Turing determinısticas reconocen una cadena de longitud $n$ en exactamente $n$ transiciones.
-> Falso. 
+> Falso. A diferencia de un autómata finito (AFD) o un autómata de pila determinista (APD) que solo pueden moverse en una dirección sobre la entrada y típicamente leen cada símbolo una vez, una MT puede mover su cabeza en ambas direcciones. Esto significa que puede leer el mismo símbolo de la cinta múltiples veces, realizando muchas transiciones adicionales.
 
-6. Sea $M$ un $AFD$ y sea $M^R$ el automata que resulta de revertir función de transición. $L(M)$ intersección $L(M^R)$ es regular.
+6. Sea $M$ un $AFD$ y sea $M^r$ el automata que resulta de revertir función de transición. $L(M)$ intersección $L(M^r)$ es regular.
 > Verdadero. Sabemos que la intersección entre dos LR es LR y vale que $L^r$ es regular.
 
 ## Ejercicio 7. 
@@ -124,8 +126,7 @@ Decir Verdadero o Falso y justificar:
 Decir Verdadero o Falso y justificar:
 
 1. Toda funcion total de $\mathbb{N} \rightarrow \mathbb{N}$ es computable. 
-> Falso. Por ejemplo `Halt'(x) = Halt(x,x)` 
-> Duda: Halt en realidad es de $\mathbb{N} \rightarrow {0, 1}$, cambia la rsta?
+> Falso. Por ejemplo `Halt'(x) = Halt(x,x)` y también se ve por cardinalidad.
 
 2. El conjunto de funciones parcialmente computables de $\mathbb{N}$ en $\mathbb{N}$ es computablemente enumerable (c.e).
 > Verdadero. Podemos listar estas funciones con numeros de programa las cuales pueden ser parcialmente computadas.
@@ -140,17 +141,68 @@ Indicar V o F. Justificar:
 
 2. La clausura Kleene de un lenguaje c.e. es c.e.
 > Verdadero.
-Enumero $(\Sigma^*)^i$ y produzco sus palabras con el orden definido (funcion de pares).
-Veo $\prod_{k=1}^i (u_k \in L)$. Esta funcion se puede colgar, lo cual no hay problema por que me pide que sea ce.
-No corro $f(t)$ para no tildarme en un $L^i$ sino que uso $f(<j, t>) = \text{"la j esima tupla corrida por t pasos"}$
-Primero uso la funcion de pares para tomar la siguiente tupla en el orden y despues valido la pertenencia.
-En realidad la $f$ lo vemos con triplas $f(i,j,t)$ con $u \in L^i$ (doble funcion de pares)
+
+La demostración se basa en construir una máquina de Turing que enumera las palabras de $L^*$. Lo hace generando sistemáticamente todas las tuplas finitas de palabras de $\Sigma^*$, verificando si todas las palabras de una tupla pertenecen a $L$ mediante una simulación paralela del enumerador de $L$, y si es así, imprimiendo su concatenación. Como $L$ es c.e., su "verificación" (aceptación) es semi-decidible. Esta construcción garantiza que todas las palabras de $L^*$ sean eventualmente enumeradas, probando que $L^*$ es c.e. La clave está en manejar la no terminación potencial de la verificación de $w \in L$ mediante simulaciones paralelas truncadas.
+
+La enumeración sistemática de tuplas se puede lograr usando funciones de emparejamiento (pares, triplas, etc.). Por ejemplo, el conjunto de todas las tuplas finitas de números naturales es enumerable.
+
+La función $f(i, j, t)$ mencionada en el esbozo representa esta simulación: ejecuta la $j$-ésima palabra en la consideración de $L^i$ durante $t$ pasos. Al iterar sobre $i, j, t$, eventualmente se simularán todas las palabras necesarias por suficientes pasos para aceptarlas si pertenecen a $L$.
+
+#### Enumeración de Tuplas de Palabras de $\Sigma^*$
+
+Queremos enumerar todas las tuplas finitas de palabras de $\Sigma^*$, es decir, $\bigcup_{i=0}^{\infty} (\Sigma^*)^i$.
+*   **Paso 1: Codificación de una tupla fija.** Sea $i \ge 1$. Una $i$-tupla de palabras $(w_1, w_2, \ldots, w_i) \in (\Sigma^*)^i$ se puede codificar como una $i$-tupla de índices naturales $(n(w_1), n(w_2), \ldots, n(w_i)) \in \mathbb{N}^i$. Esta tupla de índices se puede codificar en un solo número natural usando la función de emparejamiento para $i$-tuplas, digamos $\text{code}_i(n(w_1), \ldots, n(w_i)) \in \mathbb{N}$.
+*   **Paso 2: Codificación de tuplas de cualquier longitud.** Una tupla de longitud variable $(w_1, \ldots, w_i)$ se puede codificar como $\langle i, \text{code}_i(n(w_1), \ldots, n(w_i)) \rangle \in \mathbb{N}$.
+*   **Paso 3: Enumeración.** Podemos enumerar todas las tuplas posibles simplemente enumerando los números naturales $t = 0, 1, 2, \ldots$. Para cada número $t$, "decodificamos" $t$ para obtener la longitud de la tupla $i$ y su código interno $c$. Luego, decodificamos $c$ para obtener los índices $n(w_1), \ldots, n(w_i)$, y finalmente usamos la función inversa $n^{-1}$ para obtener las palabras $w_1, \ldots, w_i$. Este proceso puede no ser sobre ni inyectivo si nuestras codificaciones no son perfectas, pero garantiza que cada tupla finita sea generada eventualmente.
+
+**Relación con la Función $f(i, j, t)$ del Esbozo Original:**
+*   La idea de $f(i, j, t)$ es una forma de implementar la simulación paralela.
+*   $i$: Longitud de la tupla actual que se está considerando.
+*   $j$: Índice (según alguna enumeración fija de las $i$-tuplas) de la tupla específica de palabras $(w_1, \ldots, w_i)$ que se está evaluando.
+*   $t$: Número de pasos que se ejecuta cada simulación $M_L(w_k)$.
+*   El algoritmo itera sobre $i=0, 1, 2, \ldots$. Para cada $i$, itera sobre $j=1, 2, \ldots$ (todas las $i$-tuplas). Para cada par $(i, j)$, itera sobre $t=1, 2, \ldots$.
+*   En la iteración $(i, j, t)$, se decodifica $j$ para obtener la $j$-ésima $i$-tupla $(w_1, \ldots, w_i)$. Luego se simula $M_L(w_k)$ por $t$ pasos para cada $k=1, \ldots, i$.
+*   Si para todos los $k$, la simulación de $M_L(w_k)$ ha aceptado dentro de los $t$ pasos (o en iteraciones anteriores), entonces $w_1, \ldots, w_i \in L$. Se calcula $w = w_1 \ldots w_i$ y se imprime.
+
 
 3. La clausula de Kleene de un lenguaje computable es computable.
-> Verdadero
+> Verdadero. 
+
+```
+Algoritmo Decididor_L^*(w):
+Entrada: Cadena w ∈ Σ*
+Salida: Acepta si w ∈ L^*, Rechaza si w ∉ L^*
+
+1. Si w = ε (la cadena vacía), entonces aceptar.
+    (Porque ε ∈ L^0 ⊆ L^* por definición).
+
+2. Si w ≠ ε:
+    a. Sea n = |w| (longitud de w).
+    b. Generar todas las particiones posibles de w en subcadenas no vacías.
+        (Una partición de w = a_1...a_n es una secuencia de índices 0 = i_0 < i_1 < ... < i_{k-1} < i_k = n,
+        que define las subcadenas w_1 = a_{i_0+1}...a_{i_1}, ..., w_k = a_{i_{k-1}+1}...a_{i_k}).
+        El número de tales particiones es finito (es 2^{n-1}).
+
+    c. Para cada partición w = w_1 w_2 ... w_k (donde k ≥ 1 y cada w_i ≠ ε):
+        i.  Para cada subcadena w_j (desde j=1 hasta k):
+            - Ejecutar la máquina D_L sobre la entrada w_j.
+            - Como D_L es un decididor, se detiene.
+            - Si D_L rechaza w_j, entonces esta partición no es válida.
+            Salir del bucle para las subcadenas (probar con la siguiente partición).
+        ii. Si D_L aceptó todas las subcadenas w_1, w_2, ..., w_k:
+            - Entonces w = w_1 w_2 ... w_k es una concatenación de cadenas de L.
+            - Por lo tanto, w ∈ L^*.
+            - Aceptar w.
+
+3. Si después de revisar todas las particiones finitas posibles de w,
+    ninguna resultó en que todas sus subcadenas fueran aceptadas por D_L,
+    entonces w no se puede escribir como una concatenación de cadenas de L.
+    Por lo tanto, w ∉ L^*.
+    Rechazar w.
+```
 
 4. La clausula de Kleene de un lenguaje regular es regular.
-> Verdadero
+> Verdadero. Los lenguajes regulares están cerrados por unión.
 
 5. La clausura de Kleene de un lenguaje libre de contexto es libre de contexto.
 > Verdadero. Armar una transicion lambda entre estados finales de automatas de pila.
@@ -159,7 +211,7 @@ En realidad la $f$ lo vemos con triplas $f(i,j,t)$ con $u \in L^i$ (doble funcio
 > Verdadero. Invierto las cadenas y chequeo.
 
 7. La reversa de un lenguaje ce es ce.
-> Verdadero. Con el programa del ej 2.
+> Verdadero. Con el programa del ej 2. Enumeras las cadenas y las invertis.
 
 ## Ejercicio 9.
 
@@ -205,6 +257,9 @@ $L_1 \cap L_2 = a^n b^n c^n$ no es libre de contexto
 
 3. Para todo AP hay un APD que reconoce el mismo lenguaje.
 > Falso.
+La clase de lenguajes reconocidos por Autómatas de Pila Determinísticos (APD) es estrictamente menor que la clase de lenguajes reconocidos por Autómatas de Pila No Determinísticos (AP).
+Autómatas de Pila No Determinísticos (AP o APN): Reconocen exactamente la clase de lenguajes libres de contexto (LC).
+Autómatas de Pila Determinísticos (APD): Reconocen una subclase propia de los lenguajes libres de contexto, a veces llamados lenguajes libres de contexto determinísticos o LDCD (Del inglés, Deterministic Context-Free Languages)
 
 4. Es decidible si dos AFs reconocen el mismo lenguaje o no.
 > Verdadero. Viendo que la diferencia simétrica de vacío.
@@ -225,7 +280,7 @@ Para ver si es co-deterministico:
 ## Ejercicio 12.
 
 **Enunciado**
-Dado un autómata finito determinístico $A=(Q_A, \Sigma, \delta_A, q_0, F_A)$ y determinístico $P=(Q_P, \Sigma, \Gamma, \delta_p, p_0, F_P)$ dar un algoritmo que decida si el lenguaje $L(A) \cap L(P)$ es finito. Justificar correctitud.
+Dado un autómata finito determinístico $A=(Q_A, \Sigma, \delta_A, q_0, F_A)$ y un autómata de pila determinístico $P=(Q_P, \Sigma, \Gamma, \delta_p, p_0, F_P)$ dar un algoritmo que decida si el lenguaje $L(A) \cap L(P)$ es finito. Justificar correctitud.
 
 **Solución**
 Vamos a ver que los autómatas de pila determinísticos están cerrados bajo intersección con los lenguajes regulares. El autómata resultante es un autómata de pila determinístico.
@@ -256,7 +311,7 @@ A. Si un lenguaje es reconocible por un autómata contador, entonces el lenguaje
 > Falso. Un contraejemplo puede ser:
 $$L=\{ a^i b^j c^k | i,j,k \geq 0 \land (i \neq j \lor i \neq k) \}
 =\{ a^i b^j c^k | i,j,k \geq 0 \land i \neq j\} \cup \{ a^i b^j c^Ek | i,j,k \geq 0 \land i \neq k\} = L_1 \cup L_2$$
-Vemos que $L$ es LCC por ser union de dos LCC. aV
+Vemos que $L$ es LCC por ser union de dos LCC. 
 Vale que la unión de dos contadores es reconocible por un contador.
 Vemos que $L^c$ no es reconocible por un contador mediante una propiedad más fuerte: 
 $L \text{ LCC } \rightarrow L^c \text{ no es LCC}$. Luego si $L^c$ no es LCC no hay automata de pila que lo reconozca, mucho menos un contador.
@@ -268,8 +323,27 @@ B. Si dos lenguajes $L_A$ y $L_B$ son reconocidos por autómatas contadores, ent
 > Verdadero.
 
 C. Si dos lenguajes $L_A$ y $L_B$ son reconocidos por autómatas contadores, entonces el lenguaje de su intersección también.
+> Verdadero.
+Los **autómatas contadores** (también llamados *counter automata*) son una forma limitada de **máquinas de Turing** que, además del control finito, tienen uno o más contadores que pueden incrementarse, decrementarse y compararse con cero. Son más poderosos que los autómatas finitos y los autómatas con pila, pero menos poderosos que las máquinas de Turing completas (dependiendo de la cantidad de contadores).
+
+Una propiedad importante de estos autómatas es que el **conjunto de lenguajes reconocidos por autómatas contadores es cerrado bajo intersección**.
+
+Demo: Dados..
+* $L_A$ es reconocido por un autómata contador $M_A$
+* $L_B$ es reconocido por un autómata contador $M_B$
+
+Podemos construir un nuevo autómata contador $M$ que **simule en paralelo** ambos autómatas $M_A$ y $M_B$, utilizando contadores independientes para cada uno (o combinando los contadores en una sola máquina si es necesario), y acepte una palabra solo si **ambos** autómatas la aceptan. Esto es similar a cómo se hace en la construcción del producto para autómatas finitos o de pila.
+
+Por lo tanto:
+$$
+L_A, L_B \in \text{Counter Automata Languages} \quad \Rightarrow \quad L_A \cap L_B \in \text{Counter Automata Languages}
+$$
+
+Por ejemplo, se puede codificar el contador $a$ y $b$ con $n = 2^a 3^b$.
 
 D. Todos los lenguajes reconocibles por autómatas finitos  son reconocibles por autómatas contadores.
+> Verdadero, si ignora el contador.
 
 E. No todos los lenguajes reconocibles por un autómata contador son reconocibles por un autómata finito.
+> Verdadero. Por ejemplo $L = a^n b^n$ no es regular pero puede ser aceptado por un AP contador.
 

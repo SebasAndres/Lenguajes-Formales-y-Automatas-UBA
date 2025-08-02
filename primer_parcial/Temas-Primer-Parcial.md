@@ -267,7 +267,7 @@ Armo un AF usando todos los $E_i$ como nodos y $\sigma(a, E_i) = \partial_a(E_i)
 
 #### Cociente de un Lenguaje
 Sea $L$ un lenguaje sobre un alfabeto $\Sigma$, $a \in \Sigma$:
-$$a⁻1(L) = \{ \alpha | \alpha \in \sigma^* \text{ que cumplen } a\alpha \in L \}$$
+$$a⁻1(L) = \{ \alpha | \alpha \in \Sigma^* \text{ que cumplen } a\alpha \in L \}$$
 Por ejemplo: $L={abc,cbe,a} \land \Sigma={a,b,c}$ entonces $c^{-1}(L) = \{be\}$
 
 #### Derivadas para una Expresion Regular (R)
