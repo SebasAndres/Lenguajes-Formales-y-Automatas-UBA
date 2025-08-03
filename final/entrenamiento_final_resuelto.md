@@ -341,9 +341,14 @@ $$
 
 Por ejemplo, se puede codificar el contador $a$ y $b$ con $n = 2^a 3^b$.
 
-D. Todos los lenguajes reconocibles por autómatas finitos  son reconocibles por autómatas contadores.
+D. Todos los lenguajes reconocibles por autómatas finitos son reconocibles por autómatas contadores.
 > Verdadero, si ignora el contador.
 
 E. No todos los lenguajes reconocibles por un autómata contador son reconocibles por un autómata finito.
-> Verdadero. Por ejemplo $L = a^n b^n$ no es regular pero puede ser aceptado por un AP contador.
+> Verdadero. Por ejemplo $L = a^nb^n$ no es regular pero puede ser aceptado por un AP contador.
 
+## Ejercicio 14
+**Enunciado**
+Demostrar que los automatas de cola reconocen mas lenguajes que los reconocibles por automatas de pila.
+
+**Solución**

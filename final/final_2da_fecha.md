@@ -1,4 +1,4 @@
-# Final automatas y computabilidad
+# Final LFAyC (Fecha 2)
 
 ### Ejercicio 1.
 
